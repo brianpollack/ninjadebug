@@ -9,10 +9,26 @@ globalNinjaInstance = null
 class Ninja
 
     # Format to use to display numbers, set to null for no output
-    debugNumberFormat : '#,###.[##]'
+    debugNumberFormat : '#,###.[####]'
 
     # Format to use to display dates, set to null for no output
     debugDateFormat   : 'dddd, MMMM Do YYYY, h:mm:ss a'
+
+    ##|
+    ##|  Output a string from a number padded right to a given string length
+    pad: (value, maxSpace)->
+
+        if !value?
+            value = "<null>"
+
+        if typeof value == "number"
+            str = numeral(value).format(@debugNumberFormat)
+            str = " " + str while str.length < maxSpace
+            return chalk.cyan(str)
+
+        str = value
+        str = str + " " while str.length < maxSpace
+        return str
 
     constructor: ()->
 
@@ -81,14 +97,21 @@ class Ninja
             name = varName
             name = name + " " while name.length < maxLen
             str += indent + name + " : "
-            str += @dumpVar(value, indent + "    ")
+
+            if varName == "_id"
+                str += value.toString();
+            else
+                str += @dumpVar(value, indent + "    ")
+
             str += "\n";
 
         return str;
 
     dump : (title, items...)->
 
-        str = "--------[ " + chalk.white(title) + " ]--------"
+        if !title? then title = ""
+        title += " " while title.length < 20
+        str = chalk.white(title) + " = "
         for item in items
             str += @dumpVar item, ""
 
