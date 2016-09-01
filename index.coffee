@@ -106,8 +106,6 @@ class Ninja
             else
                 str += @dumpVar(value, indent + "    ")
 
-            str += "\n";
-
         return str;
 
     dump : (title, items...)->
@@ -116,7 +114,7 @@ class Ninja
         title += " " while title.length < 20
         str = chalk.white(title) + " = "
         for item in items
-            str += @dumpVar item, ""
+            str += @dumpVar item, "    "
 
         console.log str
 
