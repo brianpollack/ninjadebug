@@ -16,7 +16,7 @@
 
     Ninja.prototype.debugDateFormat = 'dddd, MMMM Do YYYY, h:mm:ss a';
 
-    Ninja.prototype.pad = function(value, maxSpace) {
+    Ninja.prototype.pad = function(value, maxSpace, colorFunction) {
       var str;
       if (value == null) {
         value = "<null>";
@@ -26,11 +26,17 @@
         while (str.length < maxSpace) {
           str = " " + str;
         }
+        if (colorFunction != null) {
+          return colorFunction(str);
+        }
         return chalk.cyan(str);
       }
       str = value;
       while (str.length < maxSpace) {
         str = str + " ";
+      }
+      if (colorFunction != null) {
+        return colorFunction(str);
       }
       return str;
     };

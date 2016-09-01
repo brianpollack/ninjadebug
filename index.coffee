@@ -16,7 +16,7 @@ class Ninja
 
     ##|
     ##|  Output a string from a number padded right to a given string length
-    pad: (value, maxSpace)->
+    pad: (value, maxSpace, colorFunction)->
 
         if !value?
             value = "<null>"
@@ -24,10 +24,13 @@ class Ninja
         if typeof value == "number"
             str = numeral(value).format(@debugNumberFormat)
             str = " " + str while str.length < maxSpace
+
+            if colorFunction? then return colorFunction(str)
             return chalk.cyan(str)
 
         str = value
         str = str + " " while str.length < maxSpace
+        if colorFunction? then return colorFunction(str)
         return str
 
     constructor: ()->
