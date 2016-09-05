@@ -87,6 +87,9 @@ class Ninja
             str = chalk.bold("[") + all.join(", ") + chalk.bold("]")
             return str
 
+        if type == "function"
+            return "Function()"
+
         return "type=#{type}, con=" + value.constructor.toString()
 
     dumpObject : (item, indent)->
@@ -106,15 +109,43 @@ class Ninja
             else
                 str += @dumpVar(value, indent + "    ")
 
+            str += "\n";
+
         return str;
 
+    ##|
+    ##|  Log will take any number of items and output them similar to console.log
+    ##|  except that color is added automatically and objects are dummped nicely.
+    ##|
+    log : (items...)->
+
+        level = 0
+        for item in items
+            if typeof item == "string" and level == 0
+                level++
+                process.stdout.write item
+            else
+                str = @dumpVar item, ""
+                process.stdout.write str
+                level--
+
+        process.stdout.write "\n"
+
+    ##|
+    ##|  Dump attempts to display a variable as if it were an assignment that you
+    ##|  can just copy/paste back into your code if needed.
+    ##|
     dump : (title, items...)->
+
+        if !items?
+            items = title
+            title = ""
 
         if !title? then title = ""
         title += " " while title.length < 20
         str = chalk.white(title) + " = "
         for item in items
-            str += @dumpVar item, "    "
+            str += @dumpVar item, ""
 
         console.log str
 

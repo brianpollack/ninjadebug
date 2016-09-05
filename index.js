@@ -102,6 +102,9 @@
         str = chalk.bold("[") + all.join(", ") + chalk.bold("]");
         return str;
       }
+      if (type === "function") {
+        return "Function()";
+      }
       return ("type=" + type + ", con=") + value.constructor.toString();
     };
 
@@ -132,9 +135,31 @@
       return str;
     };
 
+    Ninja.prototype.log = function() {
+      var i, item, items, len, level, str;
+      items = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+      level = 0;
+      for (i = 0, len = items.length; i < len; i++) {
+        item = items[i];
+        if (typeof item === "string" && level === 0) {
+          level++;
+          process.stdout.write(item);
+        } else {
+          str = this.dumpVar(item, "");
+          process.stdout.write(str);
+          level--;
+        }
+      }
+      return process.stdout.write("\n");
+    };
+
     Ninja.prototype.dump = function() {
       var i, item, items, len, str, title;
       title = arguments[0], items = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+      if (items == null) {
+        items = title;
+        title = "";
+      }
       if (title == null) {
         title = "";
       }
