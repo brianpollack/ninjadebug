@@ -15,20 +15,33 @@ class Ninja
     debugDateFormat   : 'dddd, MMMM Do YYYY, h:mm:ss a'
 
     ##|
+    ##|  Returns a text formatted value for a decimal that is a percent
+    dumpPercent: (value)->
+        if !value? then value = 0
+        return numeral(value).format('#,### %')
+
+    ##|
     ##|  Output a string from a number padded right to a given string length
-    pad: (value, maxSpace, colorFunction)->
+    pad: (value, maxSpace, colorFunction, customFormat)->
 
         if !value?
             value = "<null>"
 
+        if typeof value == "number" and isNaN(value)
+            value = "<isNaN>"
+
         if typeof value == "number"
-            str = numeral(value).format(@debugNumberFormat)
+            if customFormat?
+                str = numeral(value).format(customFormat)
+            else
+                str = numeral(value).format(@debugNumberFormat)
+
             str = " " + str while str.length < maxSpace
 
             if colorFunction? then return colorFunction(str)
             return chalk.cyan(str)
 
-        str = value
+        str = value.toString()
         str = str + " " while str.length < maxSpace
         if colorFunction? then return colorFunction(str)
         return str
@@ -37,6 +50,7 @@ class Ninja
 
     dumpNumber : (value)->
         if @debugNumberFormat?
+            if !value? then return @dumpNull()
             return chalk.cyan(numeral(value).format(@debugNumberFormat))
         return chalk.cyan(value)
 

@@ -16,13 +16,27 @@
 
     Ninja.prototype.debugDateFormat = 'dddd, MMMM Do YYYY, h:mm:ss a';
 
-    Ninja.prototype.pad = function(value, maxSpace, colorFunction) {
+    Ninja.prototype.dumpPercent = function(value) {
+      if (value == null) {
+        value = 0;
+      }
+      return numeral(value).format('#,### %');
+    };
+
+    Ninja.prototype.pad = function(value, maxSpace, colorFunction, customFormat) {
       var str;
       if (value == null) {
         value = "<null>";
       }
+      if (typeof value === "number" && isNaN(value)) {
+        value = "<isNaN>";
+      }
       if (typeof value === "number") {
-        str = numeral(value).format(this.debugNumberFormat);
+        if (customFormat != null) {
+          str = numeral(value).format(customFormat);
+        } else {
+          str = numeral(value).format(this.debugNumberFormat);
+        }
         while (str.length < maxSpace) {
           str = " " + str;
         }
@@ -31,7 +45,7 @@
         }
         return chalk.cyan(str);
       }
-      str = value;
+      str = value.toString();
       while (str.length < maxSpace) {
         str = str + " ";
       }
@@ -45,6 +59,9 @@
 
     Ninja.prototype.dumpNumber = function(value) {
       if (this.debugNumberFormat != null) {
+        if (value == null) {
+          return this.dumpNull();
+        }
         return chalk.cyan(numeral(value).format(this.debugNumberFormat));
       }
       return chalk.cyan(value);
