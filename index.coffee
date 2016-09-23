@@ -49,6 +49,9 @@ class Ninja
     constructor: ()->
 
     dumpNumber : (value)->
+        if isNaN(value)
+            return chalk.gray("<isNaN>")
+
         if @debugNumberFormat?
             if !value? then return @dumpNull()
             return chalk.cyan(numeral(value).format(@debugNumberFormat))
@@ -89,7 +92,7 @@ class Ninja
         prototype = value.constructor.toString()
         if /function Object/.test prototype
             str  = "\n"
-            str += @dumpObject(value, indent)
+            str += @dumpObject(value, indent + "    ")
             return str
 
         if /function Array/.test prototype
@@ -104,7 +107,9 @@ class Ninja
         if type == "function"
             return "Function()"
 
-        return "type=#{type}, con=" + value.constructor.toString()
+        str += @dumpObject(value, indent + "    ")
+
+        # return "type=#{type}, con=" + value.constructor.toString()
 
     dumpObject : (item, indent)->
 
@@ -125,7 +130,7 @@ class Ninja
 
             str += "\n";
 
-        return str;
+        return str.replace /\n$/, ""
 
     ##|
     ##|  Log will take any number of items and output them similar to console.log
@@ -156,7 +161,6 @@ class Ninja
             title = ""
 
         if !title? then title = ""
-        title += " " while title.length < 20
         str = chalk.white(title) + " = "
         for item in items
             str += @dumpVar item, ""

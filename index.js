@@ -58,6 +58,9 @@
     function Ninja() {}
 
     Ninja.prototype.dumpNumber = function(value) {
+      if (isNaN(value)) {
+        return chalk.gray("<isNaN>");
+      }
       if (this.debugNumberFormat != null) {
         if (value == null) {
           return this.dumpNull();
@@ -107,7 +110,7 @@
       prototype = value.constructor.toString();
       if (/function Object/.test(prototype)) {
         str = "\n";
-        str += this.dumpObject(value, indent);
+        str += this.dumpObject(value, indent + "    ");
         return str;
       }
       if (/function Array/.test(prototype)) {
@@ -122,7 +125,7 @@
       if (type === "function") {
         return "Function()";
       }
-      return ("type=" + type + ", con=") + value.constructor.toString();
+      return str += this.dumpObject(value, indent + "    ");
     };
 
     Ninja.prototype.dumpObject = function(item, indent) {
@@ -149,7 +152,7 @@
         }
         str += "\n";
       }
-      return str;
+      return str.replace(/\n$/, "");
     };
 
     Ninja.prototype.log = function() {
@@ -179,9 +182,6 @@
       }
       if (title == null) {
         title = "";
-      }
-      while (title.length < 20) {
-        title += " ";
       }
       str = chalk.white(title) + " = ";
       for (i = 0, len = items.length; i < len; i++) {
