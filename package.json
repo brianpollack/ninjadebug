@@ -1,6 +1,6 @@
 {
   "name": "ninjadebug",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Debugging tools for Node.js written in CoffeeScript for general debugging and terminal output ",
   "main": "lib/index.js",
   "scripts": {
